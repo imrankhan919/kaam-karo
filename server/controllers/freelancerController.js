@@ -35,9 +35,18 @@ const updateProfile = async (req, res) => {
     res.send("Profile Updated")
 }
 
+const getFreelancers = async (req, res) => {
+    res.send("All Freelancers")
+}
+
+const getFreelancer = async (req, res) => {
+    res.send("Single Freelancer")
+}
 
 
-const freelancerController = { becomeFreelancer, applyForProject, submitProject, getMyPreviousProjects, getMyWork, addMyWork, updateProfile, udpateMyWork, removeMyWork }
+
+
+const freelancerController = { becomeFreelancer, applyForProject, submitProject, getMyPreviousProjects, getMyWork, addMyWork, updateProfile, udpateMyWork, removeMyWork, getFreelancers, getFreelancer }
 
 
 export default freelancerController

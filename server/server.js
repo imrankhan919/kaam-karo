@@ -6,6 +6,7 @@ import connectDB from "./config/dbConfig.js"
 import authRoutes from "./routes/authRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import freelancerRoutes from "./routes/freelancerRoutes.js"
+import projectRoutes from "./routes/projectRoutes.js"
 
 
 const PORT = process.env.PORT || 8000
@@ -30,6 +31,10 @@ app.use("/api/admin", adminRoutes)
 
 // Freelancer Routes
 app.use("/api/freelancer", freelancerRoutes)
+
+// Project Routes
+app.use("/api/project", projectRoutes)
+
 
 
 app.listen(PORT, () => {

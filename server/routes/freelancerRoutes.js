@@ -1,8 +1,12 @@
 import express from "express"
 import freelancerController from "../controllers/freelancerController.js"
 
+import ratingRoutes from "./ratingRoutes.js"
 
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
+
+router.get("/", freelancerController.getFreelancers)
+router.get("/:fid", freelancerController.getFreelancer)
 
 router.post("/add-me", freelancerController.becomeFreelancer)
 
@@ -16,6 +20,10 @@ router.put("/my-work/:wid", freelancerController.udpateMyWork)
 router.delete("/my-work/:wid", freelancerController.removeMyWork)
 
 router.put("/profile", freelancerController.updateProfile)
+
+
+router.use("/:fid/ratings", ratingRoutes)
+
 
 
 export default router
