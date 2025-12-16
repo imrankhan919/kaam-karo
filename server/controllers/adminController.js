@@ -6,6 +6,10 @@ const updateUser = async (req, res) => {
     res.send("User Updated...")
 }
 
+
+
+
+
 const adminController = { getAllUsers, updateUser }
 
 export default adminController

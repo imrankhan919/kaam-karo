@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import freelancerRoutes from "./routes/freelancerRoutes.js"
 import projectRoutes from "./routes/projectRoutes.js"
+import errorHandler from "./middleware/errorHandler.js"
 
 
 const PORT = process.env.PORT || 8000
@@ -40,6 +41,9 @@ app.use("/api/freelancer", freelancerRoutes)
 app.use("/api/project", projectRoutes)
 
 
+
+// Error Handler
+app.use(errorHandler)
 
 app.listen(PORT, () => {
     console.log(`SERVER IS RUNNING AT PORT : ${PORT}`.bgBlue.black)
