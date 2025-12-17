@@ -2,13 +2,14 @@ import express from "express"
 import freelancerController from "../controllers/freelancerController.js"
 
 import ratingRoutes from "./ratingRoutes.js"
+import protect from "../middleware/authMiddleware.js"
 
 const router = express.Router({ mergeParams: true })
 
 router.get("/", freelancerController.getFreelancers)
 router.get("/:fid", freelancerController.getFreelancer)
 
-router.post("/add-me", freelancerController.becomeFreelancer)
+router.post("/add-me", protect.forAuthUsers, freelancerController.becomeFreelancer)
 
 router.get("/project", freelancerController.getMyPreviousProjects)
 router.post("/project/:pid", freelancerController.applyForProject)
