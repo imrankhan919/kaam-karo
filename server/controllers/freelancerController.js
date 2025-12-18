@@ -1,6 +1,10 @@
 import Freelancer from "../models/freelancerModel.js"
+import PreviousWork from "../models/previousWorks.js"
 import User from "../models/userModel.js"
 
+
+
+// Become Freelancer
 const becomeFreelancer = async (req, res) => {
 
     let userId = req.user._id
@@ -37,39 +41,162 @@ const becomeFreelancer = async (req, res) => {
 
 }
 
+
+// Apply For Project
 const applyForProject = async (req, res) => {
     res.send("Applied For Project")
 }
 
+// Submit Project Status
 const submitProject = async (req, res) => {
     res.send("Project Upated!")
 }
 
-
+// Previous Projects : (Given By Clients)
 const getMyPreviousProjects = async (req, res) => {
     res.send("All Previous Projects Here")
 }
 
+// Previous Work : (Before Portal)
 const getMyWork = async (req, res) => {
-    res.send("All Work Here")
+
+    let userId = req.user._id
+
+    // Check Freelancer
+    let freelancer = await Freelancer.findOne({ user: userId })
+
+    if (!freelancer) {
+        res.status(404)
+        throw new Error("Freelancer Not Found!")
+    }
+
+    let myWorks = await PreviousWork.find({ freelancer: freelancer._id }).populate("freelancer")
+
+    if (!myWorks) {
+        res.status(404)
+        throw new Error("No Previous Work Found!")
+    }
+
+    res.status(200).json(myWorks)
 }
 
+
+// Add Work : (Outside Portal)
 const addMyWork = async (req, res) => {
-    res.send("Work Added")
+
+    let userId = req.user._id
+
+    const { projectLink, projectDescription } = req.body
+
+    // Check Freelancer
+    let freelancer = await Freelancer.findOne({ user: userId })
+
+    if (!freelancer) {
+        res.status(404)
+        throw new Error("Freelancer Not Found!")
+    }
+
+
+
+    const work = await PreviousWork.create({
+
+        freelancer: freelancer._id,
+        projectLink,
+        projectDescription,
+        projectImage: req.file.path
+
+    })
+
+    await work.populate("freelancer")
+
+
+
+    if (!work) {
+        res.status(401)
+        throw new Error("Work Not Added!")
+    }
+
+    res.status(201).json(work)
+
+
 }
 
+
+
+
+// Update Work : (Outside Work)
 const udpateMyWork = async (req, res) => {
-    res.send("Work Updated")
+
+    let userId = req.user._id
+    let workId = req.params.wid
+
+
+    // Check Freelancer
+    let freelancer = await Freelancer.findOne({ user: userId })
+
+    if (!freelancer) {
+        res.status(404)
+        throw new Error("Freelancer Not Found!")
+    }
+
+    // Update Work
+    const updatedWork = await PreviousWork.findByIdAndUpdate(workId, req.body, { new: true })
+
+    if (!updatedWork) {
+        res.status(409)
+        throw new Error("Work Not Updated")
+    }
+
+    res.status(200).json(updatedWork)
 }
 
+
+// Remove Work : (Outside Portal)
 const removeMyWork = async (req, res) => {
-    res.send("Work Removed")
+    let userId = req.user._id
+    let workId = req.params.wid
+
+
+    // Check Freelancer
+    let freelancer = await Freelancer.findOne({ user: userId })
+
+    if (!freelancer) {
+        res.status(404)
+        throw new Error("Freelancer Not Found!")
+    }
+
+    await PreviousWork.findByIdAndDelete(workId)
+
+    res.status(200).json({
+        success: true,
+        workId: workId,
+        message: "Work Removed!"
+    })
+
+
+
 }
 
+// Upadte Profile
 const updateProfile = async (req, res) => {
-    res.send("Profile Updated")
+
+    let userId = req.user._id
+
+    // Update Profile
+    const updatedProfile = await User.findByIdAndUpdate(userId, req.body, { new: true }).select("-password")
+
+
+    if (!updatedProfile) {
+        res.status(409)
+        throw new Error("Profile Not Updated")
+    }
+
+    res.status(200).json(updatedProfile)
+
 }
 
+
+// Get All Freelancers
 const getFreelancers = async (req, res) => {
     const freelancers = await Freelancer.find().populate('user')
 
@@ -82,6 +209,8 @@ const getFreelancers = async (req, res) => {
 
 }
 
+
+// Get Freelancer
 const getFreelancer = async (req, res) => {
     const freelancer = await Freelancer.findById(req.params.fid).populate('user')
 
