@@ -1,5 +1,6 @@
 import Freelancer from "../models/freelancerModel.js"
 import PreviousWork from "../models/previousWorks.js"
+import Project from "../models/projectModel.js"
 import User from "../models/userModel.js"
 
 
@@ -44,6 +45,21 @@ const becomeFreelancer = async (req, res) => {
 
 // Apply For Project
 const applyForProject = async (req, res) => {
+
+    let projectId = req.params.pid
+
+    // Check if project exists
+    const project = await Project.findById(projectId)
+
+    if (!project) {
+        res.status(404)
+        throw new Error("Project Not Found!")
+    }
+
+    // Create Bid
+
+
+
     res.send("Applied For Project")
 }
 
