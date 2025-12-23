@@ -13,7 +13,7 @@ router.get("/profile/:fid", freelancerController.getFreelancer)
 router.post("/add-me", protect.forAuthUsers, freelancerController.becomeFreelancer)
 
 router.get("/project", freelancerController.getMyPreviousProjects)
-router.post("/project/:pid", freelancerController.applyForProject)
+router.post("/project/:pid", protect.forAuthUsers, freelancerController.applyForProject)
 router.put("/project/:pid", freelancerController.submitProject)
 
 router.get("/my-work", protect.forAuthUsers, freelancerController.getMyWork)

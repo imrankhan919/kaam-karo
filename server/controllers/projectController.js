@@ -39,7 +39,7 @@ const listProject = async (req, res) => {
 
 const getListedProjects = async (req, res) => {
 
-    const projects = await Project.find()
+    const projects = await Project.find().populate('user')
 
     if (!projects) {
         res.status(404)

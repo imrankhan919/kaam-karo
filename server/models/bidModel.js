@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const bidSchema = new mongoose({
+const bidSchema = new mongoose.Schema({
     freelancer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Freelancer",
@@ -12,13 +12,13 @@ const bidSchema = new mongoose({
         required: true
     },
     amount: {
-        type: number,
+        type: Number,
         required: true
     },
     status: {
         type: String,
-        enum: ["accepeted", "rejected"],
-        required: true
+        enum: ["pending", "accepeted", "rejected"],
+        default: "pending"
     }
 }, {
     timestamps: true

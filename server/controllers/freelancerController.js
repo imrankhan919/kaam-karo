@@ -1,3 +1,4 @@
+import Bid from "../models/bidModel.js"
 import Freelancer from "../models/freelancerModel.js"
 import PreviousWork from "../models/previousWorks.js"
 import Project from "../models/projectModel.js"
@@ -47,6 +48,15 @@ const becomeFreelancer = async (req, res) => {
 const applyForProject = async (req, res) => {
 
     let projectId = req.params.pid
+    let userId = req.user._id
+
+    const { amount } = req.body
+
+    if (!amount) {
+        res.status(409)
+        throw new Error("Please Enter You Bid Amount!")
+    }
+
 
     // Check if project exists
     const project = await Project.findById(projectId)
@@ -56,11 +66,46 @@ const applyForProject = async (req, res) => {
         throw new Error("Project Not Found!")
     }
 
+    // Check if users exist
+    const user = await User.findById(userId)
+    if (!user) {
+        res.status(404)
+        throw new Error("User Not Found!")
+    }
+
+    // Check If Freelancer Exist
+    const freelancer = await Freelancer.findOne({ user: user._id })
+
+    if (!freelancer) {
+        res.status(409)
+        throw new Error("Freelancer Not Exist")
+    }
+
+
+
+    // Check if bidder has credits
+    if (user.credits <= 0) {
+        res.status(409)
+        throw new Error('Not Enough Credits!')
+    }
+
+
     // Create Bid
+    const bid = new Bid({
+        freelancer: freelancer._id,
+        project: projectId,
+        amount: amount
+    })
+
+    await bid.save()
+    await bid.populate('freelancer')
+    await bid.populate('project')
+
+    // Update Credits
+    await User.findByIdAndUpdate(userId, { credits: user.credits - 1 }, { new: true })
 
 
-
-    res.send("Applied For Project")
+    res.status(201).json(bid)
 }
 
 // Submit Project Status
