@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.get("/", projectController.getListedProjects)
 router.post("/add", protect.forAuthUsers, projectController.listProject)
-router.post("/:pid", protect.forAuthUsers, projectController.acceptProjectRequest)
+router.post("/:bid", protect.forAuthUsers, projectController.acceptProjectRequest)
 router.put("/:pid", protect.forAuthUsers, projectController.updateProjectStatus)
 router.get("/:pid", protect.forAuthUsers, projectController.checkProjectApplications)
 

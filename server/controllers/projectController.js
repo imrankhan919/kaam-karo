@@ -1,3 +1,4 @@
+import Bid from "../models/bidModel.js"
 import Project from "../models/projectModel.js"
 
 const listProject = async (req, res) => {
@@ -53,16 +54,100 @@ const getListedProjects = async (req, res) => {
 
 
 const checkProjectApplications = async (req, res) => {
-    res.send("All project applications here...")
+    const projectId = req.params.pid
+
+    // Check if project exists
+    const project = await Project.findById(projectId)
+
+    if (!project) {
+        res.status(404)
+        throw new Error("Project Not Found")
+    }
+
+    // Check if biddings exist
+    let biddings = await Bid.find({ project: projectId }).populate('project').populate('freelancer')
+
+    if (!biddings) {
+        res.status(404)
+        throw new Error('No Biddings Found!')
+    }
+
+    res.status(200).json(biddings)
 }
 
 const acceptProjectRequest = async (req, res) => {
-    res.send("project request accepted!")
+
+    const { status } = req.body
+
+    if (!status) {
+        res.status(409)
+        throw new Error("Please Send Status")
+    }
+
+    const userId = req.user._id
+    const bidId = req.params.bid
+
+    const bid = await Bid.findById(bidId).populate('freelancer').populate('project')
+
+    if (!bid) {
+        res.status(404)
+        throw new Error("Bid Not Found")
+    }
+
+    // Check if user id and project user is is same
+    if (bid.project.user.toString() !== userId.toString()) {
+        res.status(409)
+        throw new Error("You are not rightfull owner of this project...")
+    }
+
+
+    const updatedBid = await Bid.findByIdAndUpdate(bidId, { status: status }, { new: true })
+
+    if (!updatedBid) {
+        res.status(401)
+        throw new Error("Bid Not Updated!")
+    }
+
+
+    if (updatedBid.status === "accepted") {
+        // Assign Freelancer to project
+        const updatedProject = await Project.findByIdAndUpdate(bid.project._id, { freelancer: bid.freelancer._id }, { new: true }).populate("freelancer")
+        res.status(200).json({
+            project: updatedProject,
+            bid: updatedBid
+        })
+    } else {
+        res.status(200).json(updatedBid)
+    }
+
+
+
+
+
 }
 
 
 const updateProjectStatus = async (req, res) => {
-    res.send("Project Status Updated")
+
+    const { status } = req.body
+    if (!status) {
+        res.status(409)
+        throw new Error("Please Send Status")
+    }
+
+
+    const projectId = req.params.pid
+
+
+    const project = await Project.findByIdAndUpdate(projectId, { status: status }, { new: true }).populate('user').populate('freelancer')
+
+    if (!project) {
+        res.status(409)
+        throw new Error("Work Progress Not Exist")
+    }
+
+    res.status(200).json(project)
+
 }
 
 

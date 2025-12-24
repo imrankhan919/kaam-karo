@@ -110,12 +110,46 @@ const applyForProject = async (req, res) => {
 
 // Submit Project Status
 const submitProject = async (req, res) => {
-    res.send("Project Upated!")
+
+    const projectId = req.params.pid
+
+    const workProgress = await Project.findByIdAndUpdate(projectId, { status: "in-progress" }, { new: true }).populate('user').populate('freelancer')
+
+    if (!workProgress) {
+        res.status(409)
+        throw new Error("Work Progress Not Exist")
+    }
+
+    res.status(200).json(workProgress)
+
+
 }
+
+
+
 
 // Previous Projects : (Given By Clients)
 const getMyPreviousProjects = async (req, res) => {
-    res.send("All Previous Projects Here")
+
+    const userId = req.user._id
+
+    const freelancer = await Freelancer.findOne({ user: userId })
+
+    if (!freelancer) {
+        res.status(404)
+        throw new Error("Freelancer Not Found")
+    }
+
+
+    const previousProject = await Project.find({ freelancer: freelancer._id }).populate('freelancer')
+
+    if (!previousProject) {
+        res.status(404)
+        throw new Error("Projects Not Found")
+    }
+
+    res.status(200).json(previousProject)
+
 }
 
 // Previous Work : (Before Portal)
