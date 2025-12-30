@@ -6,7 +6,7 @@ import protect from "../middleware/authMiddleware.js"
 const router = express.Router()
 
 
-router.post("/register", upload.single("profilePic"), authController.registerUser)
+router.post("/register", authController.registerUser)
 router.post("/login", authController.loginUser)
 router.post("/private", protect.forAdmin, authController.privateController)
 

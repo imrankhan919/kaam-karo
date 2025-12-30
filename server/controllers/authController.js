@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 const registerUser = async (req, res) => {
 
     // Check if all fields are coming
-    const { name, email, phone, password } = req.body
+    const { name, email, phone, password, profilePic } = req.body
 
     if (!name || !email || !password || !phone) {
         res.status(409)
@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
 
 
     const user = await User.create({
-        name, email, phone, password: hashedPassword, profilePic: req.file.path
+        name, email, phone, password: hashedPassword, profilePic
     })
 
 
