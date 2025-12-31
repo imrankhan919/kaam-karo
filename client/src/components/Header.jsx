@@ -32,7 +32,7 @@ const Header = () => {
                         <a className="text-slate-600 hover:text-indigo-600 transition-colors duration-300">How It Works</a>
                         {
                             user ? (<>
-                                <Link to={"/auth/profile"} className="px-4 py-2 text-slate-600 hover:text-indigo-600 transition-colors duration-300">{user?.name}</Link>
+                                <Link to={user.isAdmin ? "/admin/dashboard" : "/auth/profile"} className="px-4 py-2 text-slate-600 hover:text-indigo-600 transition-colors duration-300">{user?.name}</Link>
                                 <button onClick={handleLogout} className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-600 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">Logout</button>
                             </>) : (<>
                                 <Link to={"/login"} className="px-4 py-2 text-slate-600 hover:text-indigo-600 transition-colors duration-300">Login</Link>
