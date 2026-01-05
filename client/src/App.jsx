@@ -6,6 +6,7 @@ import Header from './components/Header'
 import { ToastContainer } from 'react-toastify'
 import Dashboard from './pages/admin/Dashboard'
 import Talents from './pages/Talents'
+import FreelancerProfile from './pages/FreelancerProfile'
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/admin/dashboard' element={<Dashboard />} />
         <Route path='/talent' element={<Talents />} />
+        <Route path='/talent/:id' element={<FreelancerProfile />} />
       </Routes>
       <ToastContainer />
     </Router>

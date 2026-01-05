@@ -3,7 +3,7 @@ import freelancerService from './freelancerService';
 
 const initialState = {
     freelancers: [],
-    freelancer: {},
+    freelancer: null,
     freelancerLoading: false,
     freelancerSuccess: false,
     freelancerError: false,
@@ -33,6 +33,22 @@ const freelancerSlice = createSlice({
                 state.freelancerSuccess = false
                 state.freelancerError = false
             })
+            .addCase(getFreelancer.pending, (state, action) => {
+                state.freelancerLoading = true
+                state.freelancerSuccess = false
+                state.freelancerError = false
+            })
+            .addCase(getFreelancer.fulfilled, (state, action) => {
+                state.freelancerLoading = false
+                state.freelancerSuccess = true
+                state.freelancerError = false
+                state.freelancer = action.payload
+            })
+            .addCase(getFreelancer.rejected, (state, action) => {
+                state.freelancerLoading = false
+                state.freelancerSuccess = false
+                state.freelancerError = false
+            })
 
     }
 });
@@ -47,6 +63,18 @@ export default freelancerSlice.reducer
 export const getFreelancers = createAsyncThunk("FETCH/FREELANCERS", async (_, thunkAPI) => {
     try {
         return await freelancerService.fetchFreelancers()
+    } catch (error) {
+        let message = error.response.data.message
+        return thunkAPI.rejectWithValue(message)
+    }
+
+})
+
+// GET FREELANCER
+
+export const getFreelancer = createAsyncThunk("FETCH/FREELANCER", async (id, thunkAPI) => {
+    try {
+        return await freelancerService.fetchFreelancer(id)
     } catch (error) {
         let message = error.response.data.message
         return thunkAPI.rejectWithValue(message)

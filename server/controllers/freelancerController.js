@@ -308,13 +308,18 @@ const getFreelancers = async (req, res) => {
 // Get Freelancer
 const getFreelancer = async (req, res) => {
     const freelancer = await Freelancer.findById(req.params.fid).populate('user')
+    const previousWorks = await PreviousWork.find({ freelancer: freelancer._id })
 
-    if (!freelancer) {
+
+    if (!freelancer || !previousWorks) {
         res.status(404)
         throw new Error("Freelancer Not Found!")
     }
 
-    res.status(200).json(freelancer)
+    res.status(200).json({
+        profile: freelancer,
+        previousWorks: previousWorks
+    })
 }
 
 
