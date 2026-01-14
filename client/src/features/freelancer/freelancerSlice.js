@@ -81,3 +81,18 @@ export const getFreelancer = createAsyncThunk("FETCH/FREELANCER", async (id, thu
     }
 
 })
+
+// ADD Previous Work
+
+export const addPreviousProject = createAsyncThunk("ADD/PROJECT", async (formData, thunkAPI) => {
+
+    let token = thunkAPI.getState().auth.user.token
+
+    try {
+        return await freelancerService.addProject(formData, token)
+    } catch (error) {
+        let message = error.response.data.message
+        return thunkAPI.rejectWithValue(message)
+    }
+
+})

@@ -10,12 +10,26 @@ const fetchFreelancers = async () => {
 const fetchFreelancer = async (id) => {
 
     const response = await axios.get("/api/freelancer/profile/" + id)
-    console.log(response.data)
     return response.data
 
 }
 
 
-const freelancerService = { fetchFreelancers, fetchFreelancer }
+const addProject = async (formData, token) => {
+
+    let options = {
+        headers: {
+            authorization: `Bearer ${token}`
+        }
+    }
+
+    const response = await axios.post('/api/freelancer/my-work', formData, options)
+    console.log(response)
+    return response.data
+
+}
+
+
+const freelancerService = { fetchFreelancers, fetchFreelancer, addProject }
 
 export default freelancerService

@@ -181,7 +181,7 @@ const addMyWork = async (req, res) => {
 
     let userId = req.user._id
 
-    const { projectLink, projectDescription } = req.body
+    const { projectLink, projectDescription, projectImage } = req.body
 
     // Check Freelancer
     let freelancer = await Freelancer.findOne({ user: userId })
@@ -198,7 +198,7 @@ const addMyWork = async (req, res) => {
         freelancer: freelancer._id,
         projectLink,
         projectDescription,
-        projectImage: req.file.path
+        projectImage
 
     })
 
@@ -307,7 +307,7 @@ const getFreelancers = async (req, res) => {
 
 // Get Freelancer
 const getFreelancer = async (req, res) => {
-    const freelancer = await Freelancer.findById(req.params.fid).populate('user')
+    const freelancer = await Freelancer.findOne({ user: req.params.uid }).populate('user')
     const previousWorks = await PreviousWork.find({ freelancer: freelancer._id })
 
 

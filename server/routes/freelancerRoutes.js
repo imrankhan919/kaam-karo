@@ -8,7 +8,7 @@ import upload from "../middleware/imageUploadMiddleware.js"
 const router = express.Router({ mergeParams: true })
 
 router.get("/", freelancerController.getFreelancers)
-router.get("/profile/:fid", freelancerController.getFreelancer)
+router.get("/profile/:uid", freelancerController.getFreelancer)
 
 router.post("/add-me", protect.forAuthUsers, freelancerController.becomeFreelancer)
 
@@ -17,7 +17,7 @@ router.post("/project/:pid", protect.forAuthUsers, freelancerController.applyFor
 router.put("/project/:pid", freelancerController.submitProject)
 
 router.get("/my-work", protect.forAuthUsers, freelancerController.getMyWork)
-router.post("/my-work", protect.forAuthUsers, upload.single('projectImage'), freelancerController.addMyWork)
+router.post("/my-work", protect.forAuthUsers, freelancerController.addMyWork)
 router.put("/my-work/:wid", protect.forAuthUsers, freelancerController.udpateMyWork)
 router.delete("/my-work/:wid", protect.forAuthUsers, freelancerController.removeMyWork)
 

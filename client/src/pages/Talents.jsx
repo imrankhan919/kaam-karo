@@ -95,7 +95,7 @@ export default function Talents() {
 
                                 {/* Footer: Rate & CTA */}
                                 <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                                    <Link to={`/talent/${talent._id}`} className="flex items-center gap-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl transition-all active:scale-95 group-hover:gap-3 shadow-md shadow-indigo-600/10">
+                                    <Link to={`/talent/${talent.user._id}`} className="flex items-center gap-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl transition-all active:scale-95 group-hover:gap-3 shadow-md shadow-indigo-600/10">
                                         View Profile
                                         <ExternalLink className="w-3.5 h-3.5 opacity-70" />
                                     </Link>

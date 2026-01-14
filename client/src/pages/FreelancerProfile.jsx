@@ -18,62 +18,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { getFreelancer } from "../features/freelancer/freelancerSlice"
 import { Link, useParams } from "react-router-dom"
 
-// Static Data for "Kaam Kro" Freelancer
-const FREELANCER = {
-    name: "Arjun Sharma",
-    role: "Senior Full Stack Developer",
-    location: "Bangalore, India",
-    rating: 4.9,
-    reviewsCount: 128,
-    hourlyRate: "₹2,500",
-    experience: "6+ Years",
-    projectsDone: "85+",
-    languages: ["English", "Hindi", "Kannada"],
-    responseTime: "< 2 hours",
-    availability: "Available",
-    about:
-        "I am a passionate developer with a knack for building scalable web applications and intuitive user interfaces. With over 6 years of experience in the Indian tech ecosystem, I help startups and established brands bring their digital visions to life using modern tech stacks like React, Next.js, and Node.js. My focus is always on performance, accessibility, and pixel-perfect design.",
-    skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL", "AWS", "UI/UX Design"],
-    portfolio: [
-        {
-            title: "FinTech Dashboard",
-            description: "A comprehensive dashboard for managing investments and tracking real-time market data.",
-            image: "/fintech-dashboard-ui.jpg",
-            link: "#",
-        },
-        {
-            title: "E-commerce Engine",
-            description: "Scalable backend and lightning-fast frontend for a premium fashion brand.",
-            image: "/ecommerce-app-design.png",
-            link: "#",
-        },
-        {
-            title: "HealthConnect AI",
-            description: "AI-powered platform connecting patients with local clinics and digital prescriptions.",
-            image: "/healthcare-mobile-app.jpg",
-            link: "#",
-        },
-    ],
-    reviews: [
-        {
-            id: 1,
-            name: "Priya Iyer",
-            company: "TechNexus",
-            rating: 5,
-            comment:
-                "Arjun is an exceptional developer. He understood our requirements perfectly and delivered the project ahead of schedule. Highly recommended!",
-        },
-        {
-            id: 2,
-            name: "Vikram Mehta",
-            company: "GrowthLabs",
-            rating: 5,
-            comment:
-                "Incredible attention to detail. The UI he built for our platform is smooth and professional. Definitely hiring him again for our next phase.",
-        },
-    ],
-}
-
 export default function FreelancerProfile() {
 
 
@@ -130,7 +74,7 @@ export default function FreelancerProfile() {
                         <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                <span className="font-semibold text-foreground">{FREELANCER.rating}</span>({FREELANCER.reviewsCount}{" "}
+                                <span className="font-semibold text-foreground"></span>(
                                 reviews)
                             </span>
                         </div>
