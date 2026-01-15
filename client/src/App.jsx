@@ -8,6 +8,7 @@ import Dashboard from './pages/admin/Dashboard'
 import Talents from './pages/Talents'
 import FreelancerProfile from './pages/FreelancerProfile'
 import UserProfile from './pages/Profile'
+import AllWork from './pages/AllWork'
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/auth/profile' element={<UserProfile />} />
         <Route path='/admin/dashboard' element={<Dashboard />} />
+        <Route path='/work' element={<AllWork />} />
         <Route path='/talent' element={<Talents />} />
         <Route path='/talent/:id' element={<FreelancerProfile />} />
       </Routes>

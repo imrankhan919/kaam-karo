@@ -3,13 +3,16 @@ import { useDispatch, useSelector } from "react-redux"
 import { LoadingScreen } from "../components/LoadingScreen"
 import { useEffect, useState } from "react"
 import { addPreviousProject, getFreelancer } from "../features/freelancer/freelancerSlice"
+import { getProjects } from "../features/project/projectSlice"
+import PostWorkForm from "../components/PostWorkForm"
 
 export default function UserProfile() {
 
     const { user } = useSelector(state => state.auth)
-
+    const { listedProjects, projectLoading, projectError, projectSuccess, projectErroMessage } = useSelector(state => state.project)
     const { freelancer, freelancerLoading, freelancerSuccess, freelancerError, freelancerErrorMessage } = useSelector(state => state.freelancer)
 
+    const [viewForm, setViewForm] = useState(false)
 
     const [formData, setFormData] = useState({
         projectLink: "",
@@ -46,22 +49,8 @@ export default function UserProfile() {
     const dispatch = useDispatch()
 
 
-
-    useEffect(() => {
-
-        // Api Call
-        dispatch(getFreelancer(user._id))
-
-        if (freelancerError && freelancerErrorMessage) {
-            toast.error(freelancerErrorMessage)
-        }
-
-    }, [freelancerError, freelancerErrorMessage, user])
-
-    if (freelancerLoading || !freelancer) {
-        return (
-            <LoadingScreen />
-        )
+    const handleViewForm = () => {
+        setViewForm(viewForm ? false : true)
     }
 
 
@@ -71,33 +60,11 @@ export default function UserProfile() {
 
     const isFreelancer = user.isFreelancer
 
-    // Freelancer projects
-    const projects = freelancer.previousWorks
+    // console.log(isFreelancer)
 
-    // Client posted works
-    const postedWorks = [
-        {
-            id: 1,
-            title: "Website Redesign",
-            description: "Complete redesign of our company website",
-            budget: "$2,500",
-            status: "Open",
-        },
-        {
-            id: 2,
-            title: "Mobile App Development",
-            description: "Native iOS and Android app for our service",
-            budget: "$8,000",
-            status: "In Progress",
-        },
-        {
-            id: 3,
-            title: "Logo Design",
-            description: "Professional logo and brand identity",
-            budget: "$500",
-            status: "Closed",
-        },
-    ]
+    // Freelancer projects
+    const projects = freelancer?.previousWorks
+
 
     // Bids for selected work
     const bids = [
@@ -123,6 +90,29 @@ export default function UserProfile() {
             message: "I can deliver within 2 weeks...",
         },
     ]
+
+
+
+    useEffect(() => {
+
+        // Api Call
+
+        dispatch(getFreelancer(user._id))
+        dispatch(getProjects())
+
+        if (freelancerError && freelancerErrorMessage) {
+            toast.error(freelancerErrorMessage)
+        }
+
+    }, [freelancerError, freelancerErrorMessage, user])
+
+    if (freelancerLoading || projectLoading) {
+        return (
+            <LoadingScreen />
+        )
+    }
+
+
 
     return (
         <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -302,8 +292,18 @@ export default function UserProfile() {
                         <section className="mb-16">
                             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8">My Posted Works</h2>
 
+                            <button onClick={handleViewForm} className="my-4 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-semibold whitespace-nowrap">
+                                List Project +
+                            </button>
+
+                            {
+
+                                viewForm && <PostWorkForm handleViewForm={handleViewForm} />
+                            }
+
+
                             <div className="space-y-4">
-                                {postedWorks.map((work) => (
+                                {listedProjects.map((work) => (
                                     <div
                                         key={work.id}
                                         className="bg-white rounded-xl shadow-md border border-slate-100 p-6 hover:shadow-lg transition-shadow duration-300"
@@ -317,19 +317,19 @@ export default function UserProfile() {
                                                         <span className="font-semibold text-indigo-600">Budget: {work.budget}</span>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        {work.status === "Open" && (
+                                                        {work.status === "accepted" && (
                                                             <>
                                                                 <AlertCircle size={18} className="text-green-500" />
                                                                 <span className="font-semibold text-green-600">{work.status}</span>
                                                             </>
                                                         )}
-                                                        {work.status === "In Progress" && (
+                                                        {work.status === "in-progress" && (
                                                             <>
                                                                 <Eye size={18} className="text-blue-500" />
                                                                 <span className="font-semibold text-blue-600">{work.status}</span>
                                                             </>
                                                         )}
-                                                        {work.status === "Closed" && (
+                                                        {work.status === "pending" && (
                                                             <>
                                                                 <CheckCircle size={18} className="text-slate-500" />
                                                                 <span className="font-semibold text-slate-600">{work.status}</span>
@@ -346,6 +346,7 @@ export default function UserProfile() {
                                 ))}
                             </div>
                         </section>
+
 
                         {/* Bidding List Section */}
                         <section className="mb-16">

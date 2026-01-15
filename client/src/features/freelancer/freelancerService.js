@@ -24,7 +24,6 @@ const addProject = async (formData, token) => {
     }
 
     const response = await axios.post('/api/freelancer/my-work', formData, options)
-    console.log(response)
     return response.data
 
 }
