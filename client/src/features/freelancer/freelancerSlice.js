@@ -96,3 +96,18 @@ export const addPreviousProject = createAsyncThunk("ADD/PROJECT", async (formDat
     }
 
 })
+
+
+// Create Bid
+export const createBid = createAsyncThunk("BID/PROJECT", async (formData, thunkAPI) => {
+
+    let token = thunkAPI.getState().auth.user.token
+
+    try {
+        return await freelancerService.bidToProject(formData, token)
+    } catch (error) {
+        let message = error.response.data.message
+        return thunkAPI.rejectWithValue(message)
+    }
+
+})

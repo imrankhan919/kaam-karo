@@ -1,18 +1,23 @@
-import { Star, MapPin, Edit2, Plus, Trash2, Eye, MessageSquare, CheckCircle, AlertCircle, Mail } from "lucide-react"
+import { Star, MapPin, Edit2, Plus, Trash2, Eye, MessageSquare, CheckCircle, AlertCircle, Mail, UserCircle } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
 import { LoadingScreen } from "../components/LoadingScreen"
 import { useEffect, useState } from "react"
 import { addPreviousProject, getFreelancer } from "../features/freelancer/freelancerSlice"
-import { getProjects } from "../features/project/projectSlice"
+import { getBids, getProjects } from "../features/project/projectSlice"
 import PostWorkForm from "../components/PostWorkForm"
 
 export default function UserProfile() {
 
     const { user } = useSelector(state => state.auth)
-    const { listedProjects, projectLoading, projectError, projectSuccess, projectErroMessage } = useSelector(state => state.project)
+    const { listedProjects, bids, projectLoading, projectError, projectSuccess, projectErroMessage } = useSelector(state => state.project)
     const { freelancer, freelancerLoading, freelancerSuccess, freelancerError, freelancerErrorMessage } = useSelector(state => state.freelancer)
 
+
+    const myProjects = listedProjects.filter((project) => project.user._id === user._id)
+
+
     const [viewForm, setViewForm] = useState(false)
+    const [viewBids, setViewBids] = useState(false)
 
     const [formData, setFormData] = useState({
         projectLink: "",
@@ -22,6 +27,7 @@ export default function UserProfile() {
 
 
     const { projectLink, projectDescription, projectImage } = formData
+
 
 
     const handleChange = (e) => {
@@ -54,6 +60,12 @@ export default function UserProfile() {
     }
 
 
+    const handleViewBiddings = (id) => {
+        dispatch(getBids(id))
+        setViewBids(true)
+    }
+
+
 
     // Role can be 'freelancer' or 'client' - change to test different layouts
     const userRole = "freelancer"
@@ -66,30 +78,6 @@ export default function UserProfile() {
     const projects = freelancer?.previousWorks
 
 
-    // Bids for selected work
-    const bids = [
-        {
-            id: 1,
-            freelancerName: "Alex Rivera",
-            rating: 4.9,
-            bidAmount: "$2,200",
-            message: "I have 8 years of experience...",
-        },
-        {
-            id: 2,
-            freelancerName: "Jordan Smith",
-            rating: 4.6,
-            bidAmount: "$2,500",
-            message: "Perfect fit for your project...",
-        },
-        {
-            id: 3,
-            freelancerName: "Casey Chen",
-            rating: 4.7,
-            bidAmount: "$2,300",
-            message: "I can deliver within 2 weeks...",
-        },
-    ]
 
 
 
@@ -199,7 +187,7 @@ export default function UserProfile() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {projects.map((project) => (
+                                {projects?.map((project) => (
                                     <div
                                         key={project.id}
                                         className="bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300 group"
@@ -303,7 +291,7 @@ export default function UserProfile() {
 
 
                             <div className="space-y-4">
-                                {listedProjects.map((work) => (
+                                {myProjects.map((work) => (
                                     <div
                                         key={work.id}
                                         className="bg-white rounded-xl shadow-md border border-slate-100 p-6 hover:shadow-lg transition-shadow duration-300"
@@ -338,7 +326,7 @@ export default function UserProfile() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-semibold whitespace-nowrap">
+                                            <button onClick={() => handleViewBiddings(work._id)} className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-semibold whitespace-nowrap">
                                                 View Bids
                                             </button>
                                         </div>
@@ -349,49 +337,52 @@ export default function UserProfile() {
 
 
                         {/* Bidding List Section */}
-                        <section className="mb-16">
-                            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Bids for Selected Work</h2>
-                            <p className="text-slate-600 mb-8">Received {bids.length} bids for Website Redesign</p>
+                        {
+                            viewBids && (
+                                <section className="mb-16">
+                                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Bids for Selected Work</h2>
+                                    <p className="text-slate-600 mb-8">Received {bids.length} bids for Website Redesign</p>
 
-                            <div className="space-y-4">
-                                {bids.map((bid) => (
-                                    <div
-                                        key={bid.id}
-                                        className="bg-white rounded-xl shadow-md border border-slate-100 p-6 hover:shadow-lg transition-shadow duration-300"
-                                    >
-                                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                            <div className="flex-1">
-                                                <h3 className="text-lg font-bold text-slate-900 mb-2">{bid.freelancerName}</h3>
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <Star
-                                                            key={i}
-                                                            size={16}
-                                                            className={
-                                                                i < Math.floor(bid.rating) ? "fill-amber-400 text-amber-400" : "text-slate-300"
-                                                            }
-                                                        />
-                                                    ))}
-                                                    <span className="text-sm font-semibold text-slate-700">{bid.rating}</span>
-                                                </div>
-                                                <div className="flex flex-wrap gap-4">
-                                                    <div className="flex items-center gap-1">
-                                                        <span className="font-semibold text-indigo-600">Bid: {bid.bidAmount}</span>
+                                    {
+                                        !bids || bids.length === 0 ? (
+                                            <h1>No Bids Yet</h1>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                {bids.map((bid) => (
+                                                    <div
+                                                        key={bid.id}
+                                                        className="bg-white rounded-xl shadow-md border border-slate-100 p-6 hover:shadow-lg transition-shadow duration-300"
+                                                    >
+                                                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                                            <div className="flex-1">
+                                                                <h3 className="text-lg font-bold text-slate-900 mb-2">{bid.freelancer.user}</h3>
+                                                                <div className="flex items-center gap-2 mb-3">
+
+                                                                    <span className="text-sm font-semibold text-slate-700">{bid.freelancer.skills}</span>
+                                                                </div>
+                                                                <div className="flex flex-col gap-4">
+                                                                    <div className="flex items-center gap-1">
+                                                                        <span className="font-semibold text-xl text-indigo-600">Bid Amount : INR {bid.amount}</span>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-1 text-slate-600">
+                                                                        <UserCircle size={16} />
+                                                                        <span className="text-sm">{bid.freelancer.description}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-semibold whitespace-nowrap">
+                                                                Accept Bid
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center gap-1 text-slate-600">
-                                                        <MessageSquare size={16} />
-                                                        <span className="text-sm">{bid.message}</span>
-                                                    </div>
-                                                </div>
+                                                ))}
                                             </div>
-                                            <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-semibold whitespace-nowrap">
-                                                Accept Bid
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
+                                        )
+                                    }
+
+                                </section>
+                            )
+                        }
 
                         {/* Become Freelancer Section */}
                         <section>

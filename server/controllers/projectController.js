@@ -1,5 +1,6 @@
 import Bid from "../models/bidModel.js"
 import Project from "../models/projectModel.js"
+import User from "../models/userModel.js"
 
 const listProject = async (req, res) => {
 
@@ -66,6 +67,9 @@ const checkProjectApplications = async (req, res) => {
 
     // Check if biddings exist
     let biddings = await Bid.find({ project: projectId }).populate('project').populate('freelancer')
+
+
+
 
     if (!biddings) {
         res.status(404)

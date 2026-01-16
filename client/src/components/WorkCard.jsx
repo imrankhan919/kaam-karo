@@ -1,4 +1,5 @@
 import React from 'react'
+import { BidModal } from './BidModal'
 
 const WorkCard = ({ work }) => {
     return (
@@ -68,9 +69,8 @@ const WorkCard = ({ work }) => {
                     <div className="px-2 py-1 rounded text-xs font-medium text-blue-600 bg-blue-50">{work.status}</div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <button className="px-6 py-2 bg-emerald-500 text-white rounded-lg hover:bg-primary/90 transition-colors font-medium">
-                        Place Bid
-                    </button>
+                    <BidModal work={work} />
+
                 </div>
             </div>
         </div>
