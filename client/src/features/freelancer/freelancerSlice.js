@@ -4,6 +4,7 @@ import freelancerService from './freelancerService';
 const initialState = {
     freelancers: [],
     freelancer: null,
+    ratings: [],
     freelancerLoading: false,
     freelancerSuccess: false,
     freelancerError: false,
@@ -32,6 +33,7 @@ const freelancerSlice = createSlice({
                 state.freelancerLoading = false
                 state.freelancerSuccess = false
                 state.freelancerError = false
+                state.freelancerErrorMessage = action.payload
             })
             .addCase(getFreelancer.pending, (state, action) => {
                 state.freelancerLoading = true
@@ -48,6 +50,41 @@ const freelancerSlice = createSlice({
                 state.freelancerLoading = false
                 state.freelancerSuccess = false
                 state.freelancerError = false
+                state.freelancerErrorMessage = action.payload
+            })
+            .addCase(createRating.pending, (state, action) => {
+                state.freelancerLoading = true
+                state.freelancerSuccess = false
+                state.freelancerError = false
+            })
+            .addCase(createRating.fulfilled, (state, action) => {
+                state.freelancerLoading = false
+                state.freelancerSuccess = true
+                state.freelancerError = false
+                state.ratings = [action.payload, ...state.ratings]
+            })
+            .addCase(createRating.rejected, (state, action) => {
+                state.freelancerLoading = false
+                state.freelancerSuccess = false
+                state.freelancerError = false
+                state.freelancerErrorMessage = action.payload
+            })
+            .addCase(getRatings.pending, (state, action) => {
+                state.freelancerLoading = true
+                state.freelancerSuccess = false
+                state.freelancerError = false
+            })
+            .addCase(getRatings.fulfilled, (state, action) => {
+                state.freelancerLoading = false
+                state.freelancerSuccess = true
+                state.freelancerError = false
+                state.ratings = action.payload
+            })
+            .addCase(getRatings.rejected, (state, action) => {
+                state.freelancerLoading = false
+                state.freelancerSuccess = false
+                state.freelancerError = false
+                state.freelancerErrorMessage = action.payload
             })
 
     }
@@ -105,6 +142,33 @@ export const createBid = createAsyncThunk("BID/PROJECT", async (formData, thunkA
 
     try {
         return await freelancerService.bidToProject(formData, token)
+    } catch (error) {
+        let message = error.response.data.message
+        return thunkAPI.rejectWithValue(message)
+    }
+
+})
+
+
+// Create Rating
+export const createRating = createAsyncThunk("RATING/ADD", async (formData, thunkAPI) => {
+
+
+    let token = thunkAPI.getState().auth.user.token
+
+    try {
+        return await freelancerService.addRating(formData, token)
+    } catch (error) {
+        let message = error.response.data.message
+        return thunkAPI.rejectWithValue(message)
+    }
+
+})
+
+// Get Ratings
+export const getRatings = createAsyncThunk("RATING/GET", async (id, thunkAPI) => {
+    try {
+        return await freelancerService.fetchRatings(id)
     } catch (error) {
         let message = error.response.data.message
         return thunkAPI.rejectWithValue(message)

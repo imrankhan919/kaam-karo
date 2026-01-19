@@ -15,14 +15,15 @@ import { useEffect } from "react"
 import { toast } from "react-toastify"
 import { LoadingScreen } from "../components/LoadingScreen"
 import { useDispatch, useSelector } from "react-redux"
-import { getFreelancer } from "../features/freelancer/freelancerSlice"
+import { getFreelancer, getRatings } from "../features/freelancer/freelancerSlice"
 import { Link, useParams } from "react-router-dom"
+import { RatingModal } from "../components/RatingModal"
 
 export default function FreelancerProfile() {
 
 
-
-    const { freelancer, freelancerLoading, freelancerSuccess, freelancerError, freelancerErrorMessage } = useSelector(state => state.freelancer)
+    const { user } = useSelector(state => state.auth)
+    const { freelancer, ratings, freelancerLoading, freelancerSuccess, freelancerError, freelancerErrorMessage } = useSelector(state => state.freelancer)
 
 
     const { id } = useParams()
@@ -34,6 +35,7 @@ export default function FreelancerProfile() {
 
         // Api Call
         dispatch(getFreelancer(id))
+        dispatch(getRatings(id))
 
         if (freelancerError && freelancerErrorMessage) {
             toast.error(freelancerErrorMessage)
@@ -74,11 +76,16 @@ export default function FreelancerProfile() {
                         <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                <span className="font-semibold text-foreground"></span>(
+                                <span className="font-semibold text-foreground">{ratings.length}</span>(
                                 reviews)
                             </span>
                         </div>
                     </div>
+                    {
+                        user && <RatingModal />
+
+                    }
+
                 </div>
 
                 {/* 2️⃣ Main Content Layout */}
@@ -142,30 +149,23 @@ export default function FreelancerProfile() {
                 </div>
 
                 {/* 🟨 Reviews Section */}
-                {/* <section className="mt-16 space-y-8">
+                <section className="mt-16 space-y-8">
                     <div className="flex items-center gap-3">
                         <h2 className="text-2xl font-bold text-foreground">Client Reviews</h2>
                         <div className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-primary">
-                            {FREELANCER.reviewsCount}
+                            {ratings.length}
                         </div>
                     </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        {FREELANCER.reviews.map((review) => (
+                        {ratings.map((review) => (
                             <div
-                                key={review.id}
+                                key={review._id}
                                 className="rounded-2xl border border-gray-300 bg-card p-6 shadow-sm transition-all hover:shadow-md"
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 overflow-hidden rounded-full bg-accent">
-                                            <img
-                                                src={`/diverse-avatars.png?height=40&width=40&query=avatar+${review.name}`}
-                                                alt={review.name}
-                                            />
-                                        </div>
                                         <div>
-                                            <p className="font-bold text-foreground">{review.name}</p>
-                                            <p className="text-xs text-muted-foreground">{review.company}</p>
+                                            <p className="font-bold text-foreground">Rating : {review.rating}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1">
@@ -174,12 +174,11 @@ export default function FreelancerProfile() {
                                         ))}
                                     </div>
                                 </div>
-                                <p className="mt-4 text-sm leading-relaxed text-muted-foreground italic">"{review.comment}"</p>
+                                <p className="mt-4 text-sm leading-relaxed text-muted-foreground italic">"{review.review}"</p>
                             </div>
                         ))}
                     </div>
-                    <button className="mx-auto block text-sm font-bold text-primary hover:underline">Read all 128 reviews</button>
-                </section> */}
+                </section>
             </div>
         </main>
     )
